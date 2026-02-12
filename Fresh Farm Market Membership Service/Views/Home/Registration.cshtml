@@ -1,0 +1,138 @@
+﻿@model Fresh_Farm_Market_Membership_Service.Models.RegisterViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container mt-4">
+    <h2>Register</h2>
+    <form asp-controller="Member" asp-action="Register" method="post" enctype="multipart/form-data" class="mt-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="CreditCardNo" class="form-label"></label>
+                <input asp-for="CreditCardNo" class="form-control" type="text" inputmode="numeric" pattern="[0-9]*" />
+                <span asp-validation-for="CreditCardNo" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Gender" class="form-label"></label>
+                <select asp-for="Gender" class="form-select">
+                    <option value="">-- Select Gender --</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="MobileNo" class="form-label"></label>
+                <input asp-for="MobileNo" class="form-control" type="tel" inputmode="numeric" pattern="[0-9]*" />
+                <span asp-validation-for="MobileNo" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="DeliveryAddress" class="form-label"></label>
+                <input asp-for="DeliveryAddress" class="form-control" />
+                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" type="email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" type="password" id="Password" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <div id="password-strength" style="margin-top:5px;"></div>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="Photo" class="form-label"></label>
+                <input asp-for="Photo" type="file" accept=".jpg" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+                <small class="form-text text-muted">Only .JPG files are accepted</small>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label asp-for="AboutMe" class="form-label"></label>
+                <textarea asp-for="AboutMe" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AboutMe" class="text-danger"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <a asp-controller="Member" asp-action="Login" class="btn btn-link">Already have an account? Login</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcN6GcsAAAAAGht2pfExckXOcCQwzQ390oTsqFA"></script>
+    <script>
+        // reCAPTCHA v3 - automatically executes before form submission
+        grecaptcha.ready(function() {
+            var form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                grecaptcha.execute('6LcN6GcsAAAAAGht2pfExckXOcCQwzQ390oTsqFA', {action: 'register'}).then(function(token) {
+                    // Remove any existing g-recaptcha-response inputs
+                    var existingInput = form.querySelector('input[name="g-recaptcha-response"]');
+                    if (existingInput) {
+                        existingInput.remove();
+                    }
+                    
+                    // Add the reCAPTCHA token to the form
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'g-recaptcha-response';
+                    input.value = token;
+                    form.appendChild(input);
+                    
+                    // Submit the form
+                    form.submit();
+                });
+            });
+        });
+
+        // Password strength indicator
+        const passwordInput = document.getElementById('Password');
+        const strengthDiv = document.getElementById('password-strength');
+
+        passwordInput.addEventListener('input', function () {
+            const val = passwordInput.value;
+            let feedback = [];
+            let strength = 0;
+
+            if (val.length === 0) {
+                strengthDiv.innerHTML = "";
+                return;
+            }
+
+            if (val.length >= 12) strength++; else feedback.push("At least 12 characters");
+            if (/[a-z]/.test(val)) strength++; else feedback.push("Lower-case letter");
+            if (/[A-Z]/.test(val)) strength++; else feedback.push("Upper-case letter");
+            if (/\d/.test(val)) strength++; else feedback.push("Number");
+            if (/[^A-Za-z0-9]/.test(val)) strength++; else feedback.push("Special character");
+
+            if (strength === 5) {
+                strengthDiv.innerHTML = "<span style='color:green; font-weight:bold;'>✓ STRONG Password</span>";
+            } else if (strength >= 3) {
+                strengthDiv.innerHTML = "<span style='color:orange;'>⚠ Medium password: " + feedback.join(", ") + "</span>";
+            } else {
+                strengthDiv.innerHTML = "<span style='color:red;'>✗ Weak password: " + feedback.join(", ") + "</span>";
+            }
+        });
+    </script>
+}

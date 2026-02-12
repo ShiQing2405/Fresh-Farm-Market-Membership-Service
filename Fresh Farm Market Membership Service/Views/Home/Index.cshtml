@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <h1 class="display-4">Welcome, @ViewBag.FullName</h1>
+        
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">@TempData["Message"]</div>
+        }
+
+        <div class="card mx-auto mt-4" style="max-width: 600px;">
+            <div class="card-header">
+                <h5>Your Profile Information</h5>
+            </div>
+            <div class="card-body text-start">
+                <p><strong>Full Name:</strong> @ViewBag.FullName</p>
+                <p><strong>Email:</strong> @ViewBag.Email</p>
+                <p><strong>Gender:</strong> @ViewBag.Gender</p>
+                <p><strong>Mobile No:</strong> @ViewBag.MobileNo</p>
+                <p><strong>Delivery Address:</strong> @ViewBag.DeliveryAddress</p>
+                <p><strong>Credit Card No:</strong> @ViewBag.CreditCardNo</p>
+                <p><strong>About Me:</strong> @(ViewBag.AboutMe ?? "Not provided")</p>
+                @if (ViewBag.PhotoPath != null)
+                {
+                    <p><strong>Photo:</strong></p>
+                    <img src="@ViewBag.PhotoPath" alt="Profile Photo" class="img-thumbnail" style="max-width:200px;" />
+                }
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a asp-controller="Member" asp-action="ChangePassword" class="btn btn-warning">Change Password</a>
+            <a asp-controller="Member" asp-action="Enable2fa" class="btn btn-info">Enable 2FA</a>
+            
+            <form asp-controller="Member" asp-action="Logout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <h1 class="display-4">Welcome to Fresh Farm Market</h1>
+        <p class="lead">Your trusted source for fresh farm products delivered to your door.</p>
+        <div class="mt-4">
+            <a asp-controller="Member" asp-action="Login" class="btn btn-primary btn-lg">Login</a>
+            <a asp-controller="Member" asp-action="Register" class="btn btn-success btn-lg">Register</a>
+        </div>
+    }
+</div>
