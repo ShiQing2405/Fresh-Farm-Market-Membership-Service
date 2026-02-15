@@ -122,7 +122,7 @@ namespace Fresh_Farm_Market_Membership_Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to recipient: {MaskedEmail}", MaskEmail(toEmail));
+                _logger.LogError(ex, "Failed to send email to recipient.");
                 throw new InvalidOperationException($"Failed to send email: {ex.Message}", ex);
             }
         }
