@@ -98,7 +98,7 @@ namespace Fresh_Farm_Market_Membership_Service.Services
                 mailMessage.To.Add(toEmail);
 
                 await client.SendMailAsync(mailMessage);
-                _logger.LogInformation("Email sent successfully to {Email}", toEmail);
+                _logger.LogInformation("Email sent successfully.");
             }
             catch (Exception ex)
             {
