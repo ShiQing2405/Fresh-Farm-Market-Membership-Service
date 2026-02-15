@@ -684,7 +684,18 @@ $.extend( $.validator, {
 		},
 
 		clean: function( selector ) {
-			return $( selector )[ 0 ];
+
+			// Ensure that `selector` is treated only as a DOM element or jQuery object.
+			// Avoid passing arbitrary strings to `$()` to prevent interpreting them as HTML.
+			if ( selector && selector.nodeType ) {
+				return selector;
+			}
+
+			if ( selector && selector.jquery ) {
+				return selector[ 0 ];
+			}
+
+			return null;
 		},
 
 		errors: function() {
