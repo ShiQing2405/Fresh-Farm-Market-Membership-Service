@@ -14,6 +14,26 @@ namespace Fresh_Farm_Market_Membership_Service.Services
             _logger = logger;
         }
 
+        private string MaskEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
+            {
+                return email;
+            }
+
+            var parts = email.Split('@');
+            var localPart = parts[0];
+            var domainPart = parts[1];
+
+            if (localPart.Length <= 1)
+            {
+                return $"*@{domainPart}";
+            }
+
+            var maskedLocal = localPart[0] + new string('*', localPart.Length - 1);
+            return $"{maskedLocal}@{domainPart}";
+        }
+
         public async Task SendPasswordResetEmailAsync(string toEmail, string resetLink)
         {
             var subject = "Reset Your Password - Fresh Farm Market";
@@ -102,7 +122,7 @@ namespace Fresh_Farm_Market_Membership_Service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+                _logger.LogError(ex, "Failed to send email to recipient: {MaskedEmail}", MaskEmail(toEmail));
                 throw new InvalidOperationException($"Failed to send email: {ex.Message}", ex);
             }
         }
